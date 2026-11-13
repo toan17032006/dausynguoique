@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Ngũ Hành Đấu Sĩ — Game Người Que</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="viewport">
+  <div id="stage">
+    <canvas id="game" width="1280" height="720"></canvas>
+
+    <!-- ============================ MENU ============================ -->
+    <div id="menu-screen" class="screen">
+      <div class="menu-inner">
+        <div class="kicker">NGŨ HÀNH LUẬN KIẾM</div>
+        <h1 class="logo">
+          <span class="logo-main">NGŨ HÀNH</span>
+          <span class="logo-sub">ĐẤU SĨ</span>
+        </h1>
+        <p class="tagline">6 đấu sĩ người que · 6 tuyệt kỹ · 6 chiến trường</p>
+
+        <div class="elements-row">
+          <div class="el-orb el-kim" title="Kim — Bạch Kim Kiếm Sĩ">金</div>
+          <div class="el-orb el-moc" title="Mộc — Thanh Mộc Ẩn Sĩ">木</div>
+          <div class="el-orb el-thuy" title="Thủy — Bích Hải Long Nữ">水</div>
+          <div class="el-orb el-hoa" title="Hỏa — Xích Diễm Quyền Sư">火</div>
+          <div class="el-orb el-tho" title="Thổ — Hoàng Nhạc Lực Sĩ">土</div>
+          <div class="el-orb el-phong" title="Phong — Cuồng Phong Du Hiệp">風</div>
+        </div>
+
+        <div class="mode-row" id="mode-pills">
+          <span class="mode-label">CHẾ ĐỘ</span>
+          <button data-mode="ai" class="active">ĐẤU MÁY</button>
+          <button data-mode="pvp">2 NGƯỜI</button>
+          <button data-mode="survival">SINH TỒN</button>
+        </div>
+
+        <div class="menu-actions">
+          <button id="btn-start" class="btn btn-primary">BẮT ĐẦU</button>
+          <button id="btn-guide" class="btn btn-ghost">HƯỚNG DẪN</button>
+        </div>
+
+        <div class="menu-settings">
+          <div class="setting">
+            <span class="setting-label">ĐỘ KHÓ</span>
+            <div class="pills" id="difficulty-pills">
+              <button data-diff="easy">DỄ</button>
+              <button data-diff="normal" class="active">THƯỜNG</button>
+              <button data-diff="hard">KHÓ</button>
+            </div>
+          </div>
+          <button id="btn-sound" class="btn btn-small">ÂM THANH: BẬT</button>
+        </div>
+
+        <div class="menu-foot">Chơi bằng bàn phím &nbsp;·&nbsp; hoặc chạm trên thiết bị cảm ứng</div>
+      </div>
+    </div>
+
+    <!-- ============================ GUIDE ============================ -->
+    <div id="guide-screen" class="screen overlay hidden">
+      <div class="panel guide-panel">
+        <div class="panel-head">
+          <h2>HƯỚNG DẪN CHIẾN ĐẤU</h2>
+          <button class="btn btn-close" id="btn-guide-close">✕</button>
+        </div>
+        <div class="guide-grid">
+          <div class="guide-col">
+            <h3>ĐIỀU KHIỂN</h3>
+            <ul class="key-list">
+              <li><kbd>A</kbd><kbd>D</kbd><span>Di chuyển</span></li>
+              <li><kbd>W</kbd><span>Nhảy (Thủy nhảy 2 lần)</span></li>
+              <li><kbd>S</kbd><span>Giữ để chặn đòn</span></li>
+              <li><kbd>J</kbd><span>Đấm nhanh</span></li>
+              <li><kbd>K</kbd><span>Đá mạnh</span></li>
+              <li><kbd>Shift</kbd><span>Lướt né (có bất tử ngắn)</span></li>
+              <li><kbd>L</kbd><span>Tuyệt kỹ khi đầy nội lực</span></li>
+              <li><kbd>Esc</kbd><span>Tạm dừng</span></li>
+            </ul>
+            <h3 style="margin-top:16px">CHẾ ĐỘ 2 NGƯỜI</h3>
+            <ul class="key-list">
+              <li><kbd>←</kbd><kbd>→</kbd><span>P2 di chuyển</span></li>
+              <li><kbd>↑</kbd><kbd>↓</kbd><span>P2 nhảy / chặn</span></li>
+              <li><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd><span>P2 đấm / đá / tuyệt kỹ / lướt (hoặc numpad 1 2 3 0)</span></li>
+            </ul>
+            <p class="guide-note">Đánh trúng hoặc chịu đòn để tích <em>nội lực</em>. Đầy 100 điểm là dùng được tuyệt kỹ đặc trưng của hệ.</p>
+            <p class="guide-note">Chế độ <em>SINH TỒN</em>: chọn 1 đấu sĩ rồi đấu lần lượt tất cả đấu sĩ còn lại, mỗi trận 1 hiệp, chiến trường ngẫu nhiên không lặp lại. Thắng trận được hồi 35% máu.</p>
+          </div>
+          <div class="guide-col" id="guide-skills"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================ SELECT ============================ -->
+    <div id="select-screen" class="screen hidden">
+      <div class="select-top">
+        <button id="btn-back" class="btn btn-ghost btn-small">← MENU</button>
+        <div class="select-title" id="select-title">CHỌN ĐẤU SĨ</div>
+        <div class="select-diff"><span id="select-diff-label">ĐỘ KHÓ: THƯỜNG</span></div>
+      </div>
+
+      <div class="select-body">
+        <div class="row-label">ĐẤU SĨ CỦA BẠN<span id="p1-pick" class="pick-tag"></span></div>
+        <div class="cards" id="p1-cards"></div>
+
+        <div class="row-label" id="p2-row-label"><span id="p2-label">ĐỐI THỦ</span><span id="p2-pick" class="pick-tag"></span></div>
+        <div class="cards" id="p2-cards"></div>
+
+        <div class="survival-note hidden" id="survival-note">
+          <b>SINH TỒN</b>: đấu lần lượt tất cả đấu sĩ còn lại, mỗi trận 1 hiệp · chiến trường ngẫu nhiên, không lặp lại · hồi 35% máu sau mỗi trận thắng.
+        </div>
+
+        <div id="arena-block">
+          <div class="row-label">CHIẾN TRƯỜNG<span id="arena-pick" class="pick-tag"></span></div>
+          <div class="arenas" id="arena-cards"></div>
+        </div>
+      </div>
+
+      <div class="select-foot">
+        <div class="foot-info" id="foot-info">Chọn đấu sĩ, đối thủ và chiến trường rồi bấm VÀO TRẬN</div>
+        <button id="btn-fight" class="btn btn-primary">VÀO TRẬN</button>
+      </div>
+    </div>
+
+    <!-- ============================ PAUSE ============================ -->
+    <div id="pause-screen" class="screen overlay hidden">
+      <div class="panel pause-panel">
+        <h2>TẠM DỪNG</h2>
+        <div class="pause-actions">
+          <button id="btn-resume" class="btn btn-primary">TIẾP TỤC</button>
+          <button id="btn-restart" class="btn btn-ghost">ĐÁNH LẠI</button>
+          <button id="btn-quit" class="btn btn-ghost">CHỌN LẠI</button>
+          <button id="btn-sound2" class="btn btn-ghost">ÂM THANH: BẬT</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================ RESULT ============================ -->
+    <div id="result-screen" class="screen overlay hidden">
+      <div class="panel result-panel">
+        <div id="result-tag" class="result-tag">CHIẾN THẮNG</div>
+        <div id="result-fighter" class="result-fighter">KIM</div>
+        <div id="result-title" class="result-title"></div>
+        <div id="result-score" class="result-score">2 — 1</div>
+        <div id="result-detail" class="result-detail"></div>
+        <div class="result-actions">
+          <button id="btn-rematch" class="btn btn-primary">TÁI ĐẤU</button>
+          <button id="btn-change" class="btn btn-ghost">CHỌN LẠI</button>
+          <button id="btn-home" class="btn btn-ghost">MENU</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================ TOUCH ============================ -->
+    <div id="touch-controls" class="hidden">
+      <div class="touch-side touch-left">
+        <button class="tbtn" data-key="a">◀</button>
+        <button class="tbtn" data-key="d">▶</button>
+      </div>
+      <div class="touch-side touch-right">
+        <button class="tbtn tbtn-sm" data-key="s">CHẶN</button>
+        <button class="tbtn" data-key="j">ĐẤM</button>
+        <button class="tbtn" data-key="k">ĐÁ</button>
+        <button class="tbtn tbtn-sm" data-key="w">NHẢY</button>
+        <button class="tbtn tbtn-skill" data-key="l">KỸ</button>
+      </div>
+      <button id="btn-touch-pause" class="tbtn tbtn-pause">II</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/particles.js"></script>
+<script src="js/stickman.js"></script>
+<script src="js/fighters.js"></script>
+<script src="js/arenas.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
